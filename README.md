@@ -62,10 +62,16 @@ Créer `.env.local` à la racine du projet :
 ```env
 NEXT_PUBLIC_SITE_URL=https://ton-domaine.com
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+GMAIL_SMTP_USER=votre.email@gmail.com
+GMAIL_SMTP_APP_PASSWORD=xxxx xxxx xxxx xxxx
+CONTACT_RECEIVER_EMAIL=iheb.baklouti@polytechnicien.tn
 ```
 
 - `NEXT_PUBLIC_SITE_URL` : utilisé pour canonical, robots, sitemap, JSON-LD.
 - `NEXT_PUBLIC_GA_ID` : active Google Analytics (gtag).
+- `GMAIL_SMTP_USER` : adresse Gmail utilisée pour l'envoi SMTP.
+- `GMAIL_SMTP_APP_PASSWORD` : mot de passe d'application Google (obligatoire, pas le mot de passe normal).
+- `CONTACT_RECEIVER_EMAIL` : adresse qui reçoit les messages du formulaire.
 
 ## Déploiement sur Vercel
 

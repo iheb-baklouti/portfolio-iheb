@@ -13,8 +13,8 @@ export const profile = {
     linkedin: "https://www.linkedin.com/in/iheb-baklouti/",
   },
   languages: [
-    { name: "Français", level: "DELF B2" },
-    { name: "Anglais", level: "B1" },
+    { name: "Français", level: "Diplôme DELF B2" },
+    { name: "Anglais", level: "Niveau B2" },
   ],
 } as const;
 
@@ -23,7 +23,7 @@ export const experiences = [
     company: "La Boîte Immo",
     role: "Développeur Full Stack & Data",
     period: "Septembre 2023 — présent",
-    location: "France (remote / hybride)",
+    location: "Tunisie (remote / hybride)",
     summary:
       "Participation à la refonte majeure de Hektor, logiciel leader des agences immobilières indépendantes. J’ai rejoint l’équipe data au sein de la même entreprise : développement orienté données, intégration et industrialisation.",
     highlights: [
@@ -32,7 +32,7 @@ export const experiences = [
       "API GraphQL, qualité de code et revues (Git, Bitbucket, Figma).",
       "Projets data : récupération, transformation et traitement des données.",
       "Participation au développement d’outils intranet.",
-      "Utilisation de Talend ; configuration et mise en place de passerelles d’import et d’export.",
+      "Utilisation de Talend , configuration et mise en place de passerelles d’import et d’export.",
     ],
     stack: ["React", "Tailwind CSS", "PHP", "GraphQL", "Git", "Bitbucket", "Figma", "Jira", "Talend"],
   },
@@ -164,7 +164,7 @@ export const projects = [
   },
   {
     name: "Plateforme location de véhicules",
-    client: "ETC Tunisie (stage)",
+    client: "ETC Tunisie (stage PFE)",
     description: "Plateforme web et application mobile de gestion de location.",
     tags: ["Symfony", "Angular", "Ionic", "MySQL"],
     featured: false,

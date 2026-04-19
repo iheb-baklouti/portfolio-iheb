@@ -61,9 +61,11 @@ Créer `.env.local` à la racine du projet :
 
 ```env
 NEXT_PUBLIC_SITE_URL=https://ton-domaine.com
+NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
-Utilisé pour les métadonnées / canonical / JSON-LD. Sans cette variable, un domaine de secours est utilisé au build.
+- `NEXT_PUBLIC_SITE_URL` : utilisé pour canonical, robots, sitemap, JSON-LD.
+- `NEXT_PUBLIC_GA_ID` : active Google Analytics (gtag).
 
 ## Déploiement sur Vercel
 

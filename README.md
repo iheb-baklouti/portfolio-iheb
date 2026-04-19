@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio — Iheb Baklouti
 
-## Getting Started
+Site vitrine professionnel (full stack & data) construit avec **Next.js 16** (App Router), **Tailwind CSS v4**, **Framer Motion** et **next-themes** (thème clair / sombre).
 
-First, run the development server:
+## Fonctionnalités
+
+- Page unique responsive : accueil, à propos, projets, compétences, contact  
+- Contenu piloté par `src/data/cv.ts` (facile à mettre à jour)  
+- Photo de profil : `public/portrait.png` (optimisée via `next/image`)  
+- Formulaire de contact avec validation (action serveur + ouverture `mailto`)  
+- SEO : métadonnées, Open Graph, JSON-LD `Person`
+
+## Prérequis
+
+- [Node.js](https://nodejs.org/) 20+ recommandé  
+- npm (fourni avec Node)
+
+## Installation et développement
+
+À la racine de **ce dossier** (`portfolio-iheb`) :
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Commande      | Description              |
+| ------------- | ------------------------ |
+| `npm run dev` | Serveur de développement |
+| `npm run build` | Build de production    |
+| `npm run start` | Lance le build en local |
+| `npm run lint`  | ESLint                   |
 
-## Learn More
+## Structure utile
 
-To learn more about Next.js, take a look at the following resources:
+```
+portfolio-iheb/
+├── public/
+│   └── portrait.png          # Photo hero (à remplacer si besoin)
+├── src/
+│   ├── app/                  # App Router, layout, styles globaux
+│   ├── components/           # Sections du portfolio
+│   ├── data/
+│   │   └── cv.ts             # Textes : profil, expériences, projets, compétences…
+│   └── lib/
+│       └── motion.ts         # Variantes Framer Motion réutilisables
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Modifier le contenu
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Textes, expériences, projets, compétences** : éditer `src/data/cv.ts`.  
+- **Image d’accueil** : remplacer `public/portrait.png` (conserver le nom ou adapter `src/components/hero-section.tsx`).
 
-## Deploy on Vercel
+## Variables d’environnement (optionnel)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Créer `.env.local` à la racine du projet :
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```env
+NEXT_PUBLIC_SITE_URL=https://ton-domaine.com
+```
+
+Utilisé pour les métadonnées / canonical / JSON-LD. Sans cette variable, un domaine de secours est utilisé au build.
+
+## Déploiement sur Vercel
+
+Si sur **https://iheb-baklouti.vercel.app** (ou ton URL Vercel) tu vois encore la page par défaut *« To get started, edit the page.tsx file »*, le build ne pointe **pas** vers ce projet, mais vers un autre dépôt ou un autre dossier.
+
+### Cas A — Le dépôt Git a `portfolio-iheb` à l’intérieur du repo
+
+Exemple : racine du repo = `Portfolio Iheb/`, et l’app Next est dans `portfolio-iheb/`.
+
+1. Vercel → ton projet → **Settings** → **General**  
+2. **Root Directory** : indiquer `portfolio-iheb`  
+3. **Save**, puis redéployer (**Deployments** → **⋯** → **Redeploy**)
+
+### Cas B — Le dépôt Git est uniquement le contenu de `portfolio-iheb`
+
+La racine du repo contient déjà `package.json`, `src/`, etc. Dans ce cas, laisser **Root Directory** vide (ou `.`) et vérifier que le bon repo est connecté.
+
+### Vérifications rapides
+
+- Le dépôt lié à Vercel contient bien les dossiers `src/components/`, `src/data/cv.ts`, etc.  
+- Après changement du root, un nouveau déploiement doit afficher ton portfolio (hero avec dégradé, sections, photo).
+
+## Licence
+
+Usage personnel pour le portfolio d’Iheb Baklouti.

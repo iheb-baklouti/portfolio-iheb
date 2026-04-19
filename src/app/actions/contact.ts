@@ -1,11 +1,22 @@
 "use server";
 
 import nodemailer from "nodemailer";
+import { headers } from "next/headers";
 
 export type ContactState =
   | { ok: true; message: string }
   | { ok: false; message: string }
   | null;
+
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 5;
+const MAX_NAME_LENGTH = 100;
+const MAX_SUBJECT_LENGTH = 160;
+const MAX_MESSAGE_LENGTH = 4000;
+const MIN_FORM_FILL_MS = 2000;
+
+type RateEntry = { count: number; expiresAt: number };
+const rateLimitStore = new Map<string, RateEntry>();
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -20,14 +31,75 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#039;");
 }
 
+function normalizeOrigin(value: string) {
+  return value.trim().replace(/\/+$/, "");
+}
+
+function getClientIp(headerStore: Headers) {
+  const forwardedFor = headerStore.get("x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0]?.trim() ?? "unknown";
+  return headerStore.get("x-real-ip") ?? "unknown";
+}
+
+function isRateLimited(ip: string, now: number) {
+  for (const [key, entry] of rateLimitStore.entries()) {
+    if (entry.expiresAt <= now) rateLimitStore.delete(key);
+  }
+
+  const current = rateLimitStore.get(ip);
+  if (!current || current.expiresAt <= now) {
+    rateLimitStore.set(ip, { count: 1, expiresAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  if (current.count >= RATE_LIMIT_MAX_REQUESTS) return true;
+  current.count += 1;
+  return false;
+}
+
 export async function submitContact(_prev: ContactState, formData: FormData): Promise<ContactState> {
+  const headerStore = await headers();
+  const now = Date.now();
+  const origin = normalizeOrigin(headerStore.get("origin") ?? "");
+  const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host") ?? "";
+  const proto = headerStore.get("x-forwarded-proto") ?? "https";
+  const expectedOrigin = normalizeOrigin(process.env.ALLOWED_ORIGIN ?? `${proto}://${host}`);
+  const clientIp = getClientIp(headerStore);
+
+  // Basic origin validation to reduce cross-site request forgery risk.
+  if (origin && expectedOrigin && origin !== expectedOrigin) {
+    return { ok: false, message: "Origine de requête invalide." };
+  }
+
+  if (isRateLimited(clientIp, now)) {
+    return {
+      ok: false,
+      message: "Trop de tentatives. Réessayez dans quelques minutes.",
+    };
+  }
+
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim();
   const subject = String(formData.get("subject") ?? "").trim();
   const message = String(formData.get("message") ?? "").trim();
+  const website = String(formData.get("website") ?? "").trim();
+  const formStartedAt = Number(formData.get("formStartedAt") ?? 0);
+
+  // Honeypot field: should remain empty for humans.
+  if (website) {
+    return { ok: true, message: "Message envoyé avec succès. Je reviens vers vous rapidement." };
+  }
+
+  // Bots often submit forms instantly.
+  if (!Number.isFinite(formStartedAt) || now - formStartedAt < MIN_FORM_FILL_MS || now - formStartedAt > 2 * 60 * 60 * 1000) {
+    return { ok: false, message: "Validation anti-spam refusée. Merci de réessayer." };
+  }
 
   if (!name || name.length < 2) {
     return { ok: false, message: "Indiquez un nom valide." };
+  }
+  if (name.length > MAX_NAME_LENGTH) {
+    return { ok: false, message: "Nom trop long." };
   }
   if (!isValidEmail(email)) {
     return { ok: false, message: "Indiquez une adresse e-mail valide." };
@@ -35,8 +107,14 @@ export async function submitContact(_prev: ContactState, formData: FormData): Pr
   if (!subject || subject.length < 3) {
     return { ok: false, message: "Indiquez un objet valide (au moins 3 caractères)." };
   }
+  if (subject.length > MAX_SUBJECT_LENGTH) {
+    return { ok: false, message: "Objet trop long." };
+  }
   if (!message || message.length < 10) {
     return { ok: false, message: "Votre message doit contenir au moins 10 caractères." };
+  }
+  if (message.length > MAX_MESSAGE_LENGTH) {
+    return { ok: false, message: "Message trop long." };
   }
 
   const gmailUser = process.env.GMAIL_SMTP_USER;

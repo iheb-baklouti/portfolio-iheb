@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, Send, Globe, CheckCircle2, AlertCircle } from "lucide-react";
 import { profile } from "@/data/cv";
@@ -9,6 +9,7 @@ import { fadeUp, staggerContainer } from "@/lib/motion";
 
 export function ContactSection() {
   const [state, formAction, pending] = useActionState<ContactState, FormData>(submitContact, null);
+  const formStartedAt = useMemo(() => String(Date.now()), []);
 
   return (
     <section id="contact" className="relative py-24">
@@ -74,6 +75,15 @@ export function ContactSection() {
             action={formAction}
             className="rounded-2xl border border-border bg-card-elevated p-6 shadow-xl shadow-indigo-950/5 sm:p-8 dark:bg-card dark:shadow-black/40"
           >
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
+            />
+            <input type="hidden" name="formStartedAt" value={formStartedAt} />
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="sm:col-span-2">
                 <span className="text-xs font-bold uppercase tracking-widest text-muted">Nom</span>
@@ -134,14 +144,11 @@ export function ContactSection() {
             <button
               type="submit"
               disabled={pending}
-              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/25 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 dark:from-indigo-500 dark:via-violet-500 dark:to-fuchsia-500 sm:w-auto"
+              className="mt-8 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-900/25 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60 dark:from-indigo-500 dark:via-violet-500 dark:to-fuchsia-500 sm:w-auto"
             >
               {pending ? "Envoi en cours..." : "Envoyer l'e-mail"}
               <Send className="h-4 w-4" />
             </button>
-            <p className="mt-3 text-xs text-muted">
-              Envoi direct côté serveur via Gmail (aucun nouvel onglet).
-            </p>
           </motion.form>
         </motion.div>
       </div>

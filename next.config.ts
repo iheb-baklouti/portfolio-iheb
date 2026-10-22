@@ -10,8 +10,11 @@ const cspDirectives = [
   "object-src 'none'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  `script-src 'self' 'unsafe-inline' ${isProd ? "" : "'unsafe-eval'"} https://www.googletagmanager.com https://www.google-analytics.com`,
-  "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com ws: wss:",
+  // @vercel/speed-insights loads its debug build from va.vercel-scripts.com in
+  // dev only; in production (on Vercel) it's served same-origin via /_vercel/*,
+  // already covered by 'self', so the extra origin is scoped to non-prod.
+  `script-src 'self' 'unsafe-inline' ${isProd ? "" : "'unsafe-eval' https://va.vercel-scripts.com"} https://www.googletagmanager.com https://www.google-analytics.com`,
+  `connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com ws: wss:${isProd ? "" : " https://va.vercel-scripts.com"}`,
   "style-src 'self' 'unsafe-inline'",
   ...(isProd ? ["upgrade-insecure-requests"] : []),
 ].join("; ");

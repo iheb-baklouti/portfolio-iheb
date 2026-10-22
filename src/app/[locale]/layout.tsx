@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { notFound } from "next/navigation";
@@ -134,6 +136,8 @@ gtag('config', '${gaId}');`}
           <SiteFooter locale={activeLocale} />
           <BackToTop label={labels.a11y.backToTop} />
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

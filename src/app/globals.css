@@ -1,114 +1,339 @@
 @import "tailwindcss";
 
+/*
+ * next-themes drives the theme with a `.dark` class on <html>.
+ * Tailwind v4 defaults `dark:` to prefers-color-scheme, so the variant has to be
+ * re-pointed at the class or the utilities and the tokens below drift apart.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #f6f4ef;
-  --foreground: #0f0d14;
-  --muted: #5f5a6e;
-  --border: #e2ddd4;
-  --card: #fffcf7;
-  --card-elevated: #ffffff;
-  --accent: #4c3dff;
-  --accent-secondary: #c45f00;
-  --glow: color-mix(in srgb, var(--accent) 28%, transparent);
-  --glow-warm: color-mix(in srgb, var(--accent-secondary) 22%, transparent);
+  color-scheme: light;
+
+  --background: oklch(97.5% 0.008 85);
+  --background-subtle: oklch(95.4% 0.011 85);
+  --foreground: oklch(19% 0.025 285);
+  --muted: oklch(50% 0.025 285);
+  --faint: oklch(66% 0.02 285);
+  --border: oklch(89% 0.012 85);
+  --border-strong: oklch(82% 0.015 85);
+  --card: oklch(99.2% 0.005 85);
+  --card-elevated: oklch(100% 0 0);
+
+  --accent: oklch(52% 0.23 278);
+  --accent-soft: oklch(62% 0.19 278);
+  --accent-secondary: oklch(62% 0.17 52);
+  --accent-tertiary: oklch(58% 0.22 330);
+
+  --glow: color-mix(in oklch, var(--accent) 26%, transparent);
+  --glow-warm: color-mix(in oklch, var(--accent-secondary) 22%, transparent);
+  --glow-pink: color-mix(in oklch, var(--accent-tertiary) 18%, transparent);
+
+  --ring: color-mix(in oklch, var(--accent) 45%, transparent);
+  --shadow-color: 265 40% 22%;
+  --grain-opacity: 0.035;
+
+  --section-pad: clamp(4.5rem, 9vw, 8rem);
 }
 
 .dark {
-  --background: #06040d;
-  --foreground: #f5f2ff;
-  --muted: #a39ab8;
-  --border: #241f35;
-  --card: #0e0a18;
-  --card-elevated: #141022;
-  --accent: #9d8cff;
-  --accent-secondary: #ffb547;
-  --glow: color-mix(in srgb, var(--accent) 35%, transparent);
-  --glow-warm: color-mix(in srgb, var(--accent-secondary) 25%, transparent);
+  color-scheme: dark;
+
+  --background: oklch(14% 0.018 285);
+  --background-subtle: oklch(17% 0.022 285);
+  --foreground: oklch(96% 0.012 285);
+  --muted: oklch(72% 0.025 285);
+  --faint: oklch(58% 0.025 285);
+  --border: oklch(28% 0.025 285);
+  --border-strong: oklch(36% 0.03 285);
+  --card: oklch(18.5% 0.022 285);
+  --card-elevated: oklch(22% 0.026 285);
+
+  --accent: oklch(76% 0.15 288);
+  --accent-soft: oklch(70% 0.17 288);
+  --accent-secondary: oklch(82% 0.14 75);
+  --accent-tertiary: oklch(76% 0.16 330);
+
+  --glow: color-mix(in oklch, var(--accent) 32%, transparent);
+  --glow-warm: color-mix(in oklch, var(--accent-secondary) 22%, transparent);
+  --glow-pink: color-mix(in oklch, var(--accent-tertiary) 22%, transparent);
+
+  --ring: color-mix(in oklch, var(--accent) 55%, transparent);
+  --shadow-color: 265 60% 2%;
+  --grain-opacity: 0.055;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-subtle: var(--background-subtle);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
+  --color-faint: var(--faint);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-card: var(--card);
   --color-card-elevated: var(--card-elevated);
   --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
   --color-accent-secondary: var(--accent-secondary);
+  --color-accent-tertiary: var(--accent-tertiary);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Shared card radius, exposed to Tailwind as `rounded-card`. */
+  --radius-card: 1.25rem;
+
+  --animate-aurora-a: aurora-drift 24s ease-in-out infinite;
+  --animate-aurora-b: aurora-drift 30s ease-in-out infinite reverse;
+  --animate-aurora-c: aurora-sway 34s ease-in-out infinite;
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-marquee-reverse: marquee 38s linear infinite reverse;
+  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-shimmer: shimmer 2.6s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-caret: caret 1.05s steps(2, start) infinite;
 }
 
-@keyframes mesh-drift {
+/* ---------------------------------------------------------------- base --- */
+/* Everything element-level lives in @layer base so Tailwind utilities, which
+   sit in @layer utilities, still win over it. Unlayered rules would not. */
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Sticky header height + breathing room for in-page anchors. */
+    scroll-padding-top: 6rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--accent) 30%, transparent);
+    color: var(--foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 0.35rem;
+  }
+
+  /* Thin, theme-aware scrollbar. */
+  @supports (scrollbar-width: thin) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-strong) transparent;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border: 3px solid var(--background);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+  }
+}
+
+/* ------------------------------------------------------------ keyframes --- */
+
+@keyframes aurora-drift {
   0%,
   100% {
-    transform: translate(0, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
     opacity: 0.55;
   }
   33% {
-    transform: translate(4%, -3%) scale(1.06);
-    opacity: 0.75;
+    transform: translate3d(5%, -4%, 0) scale(1.08);
+    opacity: 0.8;
   }
   66% {
-    transform: translate(-3%, 4%) scale(0.98);
+    transform: translate3d(-4%, 5%, 0) scale(0.96);
     opacity: 0.6;
   }
 }
 
-@keyframes mesh-drift-slow {
+@keyframes aurora-sway {
   0%,
   100% {
-    transform: translate(0, 0) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
   50% {
-    transform: translate(-5%, 3%) rotate(4deg);
+    transform: translate3d(-6%, 4%, 0) rotate(5deg);
   }
 }
 
-.animate-mesh-a {
-  animation: mesh-drift 22s ease-in-out infinite;
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
-.animate-mesh-b {
-  animation: mesh-drift 28s ease-in-out infinite reverse;
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.8;
+  }
+  70%,
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
 }
 
-.animate-mesh-c {
-  animation: mesh-drift-slow 32s ease-in-out infinite;
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }
 
-.text-gradient {
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes caret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------ utilities --- */
+
+@utility text-gradient {
   background-image: linear-gradient(
-    115deg,
-    #312c85 0%,
-    #5b3ecf 35%,
-    #a855c7 65%,
-    #c2410c 100%
+    110deg,
+    var(--accent) 0%,
+    var(--accent-tertiary) 48%,
+    var(--accent-secondary) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-.dark .text-gradient {
+/* Animated sheen that runs across a gradient heading. */
+@utility text-gradient-animated {
   background-image: linear-gradient(
-    115deg,
-    #c4b5fd 0%,
-    #a78bfa 38%,
-    #f0abfc 72%,
-    #fcd34d 100%
+    110deg,
+    var(--accent) 0%,
+    var(--accent-tertiary) 30%,
+    var(--accent-secondary) 55%,
+    var(--accent-tertiary) 75%,
+    var(--accent) 100%
   );
+  background-size: 250% 100%;
   -webkit-background-clip: text;
   background-clip: text;
+  color: transparent;
+  animation: shimmer 9s linear infinite;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+@utility glass {
+  background: color-mix(in oklch, var(--card-elevated) 72%, transparent);
+  backdrop-filter: blur(18px) saturate(1.5);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  border: 1px solid color-mix(in oklch, var(--border-strong) 70%, transparent);
 }
 
-::selection {
-  background: color-mix(in srgb, var(--accent) 32%, transparent);
-  color: var(--foreground);
+@utility surface {
+  background: var(--card-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+@utility grid-lines {
+  background-image:
+    linear-gradient(to right, color-mix(in oklch, var(--border) 65%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklch, var(--border) 65%, transparent) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+
+/* Film grain, kept on its own layer so it never repaints with content. */
+@utility noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: var(--grain-opacity);
+  mix-blend-mode: overlay;
+}
+
+@utility marquee-mask {
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+@utility balance {
+  text-wrap: balance;
+}
+
+@utility pretty {
+  text-wrap: pretty;
+}
+
+/* ------------------------------------------------------ view transitions --- */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ------------------------------------------------------- reduced motion --- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
 }

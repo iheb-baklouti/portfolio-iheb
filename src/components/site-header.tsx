@@ -10,7 +10,7 @@ import { useActiveSection } from "@/hooks/use-active-section";
 import { LocaleSwitch } from "@/components/ui/locale-switch";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
-export const SECTION_IDS: string[] = ["accueil", "a-propos", "projets", "competences", "contact"];
+export const SECTION_IDS: string[] = ["accueil", "a-propos", "projets", "competences", "faq", "contact"];
 
 const menuList = {
   hidden: { opacity: 0 },
@@ -36,6 +36,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
     { id: "a-propos", label: content.labels.nav.about },
     { id: "projets", label: content.labels.nav.projects },
     { id: "competences", label: content.labels.nav.skills },
+    { id: "faq", label: content.labels.nav.faq },
     { id: "contact", label: content.labels.nav.contact },
   ];
 

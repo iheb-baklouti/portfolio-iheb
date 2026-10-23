@@ -13,6 +13,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     { href: "#a-propos", label: labels.nav.about },
     { href: "#projets", label: labels.nav.projects },
     { href: "#competences", label: labels.nav.skills },
+    { href: "#faq", label: labels.nav.faq },
     { href: "#contact", label: labels.nav.contact },
   ];
 

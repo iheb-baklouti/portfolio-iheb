@@ -1,9 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
-/** Cycles through role titles with a vertical swap, one every `interval` ms. */
+/**
+ * Cycles through role titles with a vertical swap, one every `interval` ms.
+ *
+ * Every role stays mounted at all times — only its opacity/position animates —
+ * instead of unmounting the inactive ones. Two reasons: it's the standard
+ * ARIA carousel pattern (inactive panels stay in the DOM, `aria-hidden` just
+ * keeps screen readers from announcing them), and it means search engines see
+ * the full list of roles in the rendered HTML, not only whichever one happens
+ * to be showing when the page is crawled.
+ */
 export function RoleRotator({ roles, interval = 2600 }: { roles: string[]; interval?: number }) {
   const [index, setIndex] = useState(0);
   const reduceMotion = useReducedMotion();
@@ -20,18 +29,23 @@ export function RoleRotator({ roles, interval = 2600 }: { roles: string[]; inter
       <span aria-hidden className="pointer-events-none invisible block whitespace-nowrap">
         {roles.reduce((longest, role) => (role.length > longest.length ? role : longest), "")}
       </span>
-      <AnimatePresence mode="wait" initial={false}>
+
+      {roles.map((role, i) => (
         <motion.span
-          key={roles[index]}
-          initial={{ y: "100%", opacity: 0 }}
-          animate={{ y: "0%", opacity: 1 }}
-          exit={{ y: "-100%", opacity: 0 }}
+          key={role}
+          initial={false}
+          animate={
+            i === index
+              ? { y: "0%", opacity: 1 }
+              : { y: i < index ? "-100%" : "100%", opacity: 0 }
+          }
           transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+          aria-hidden={i !== index}
           className="absolute inset-0 whitespace-nowrap text-gradient"
         >
-          {roles[index]}
+          {role}
         </motion.span>
-      </AnimatePresence>
+      ))}
     </span>
   );
 }

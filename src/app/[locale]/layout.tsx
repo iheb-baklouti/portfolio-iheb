@@ -37,19 +37,49 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   if (!isLocale(locale)) return {};
 
   const { profile } = getPortfolioContent(locale);
-  const title = `${profile.name} — ${profile.headline}`;
+  // The headline alone ("Développeur Full Stack & Data") doesn't contain the
+  // word a hiring client actually searches for. The on-page hero keeps the
+  // clean headline; only the <title> — what Google shows in results — adds
+  // "freelance" explicitly.
+  const title =
+    locale === "fr"
+      ? `${profile.name} — ${profile.headline} freelance`
+      : `${profile.name} — Freelance ${profile.headline}`;
 
   return {
     metadataBase: new URL(siteUrl),
     title: { default: title, template: `%s | ${profile.name}` },
-    description: profile.slogan,
+    description: profile.metaDescription,
     applicationName: `${profile.name} Portfolio`,
     authors: [{ name: profile.name, url: profile.contact.linkedin }],
     creator: profile.name,
     keywords:
       locale === "fr"
-        ? ["développeur full stack", "ingénieur data", "React", "Next.js", "Symfony", "Talend", "ETL", "freelance"]
-        : ["full stack developer", "data engineer", "React", "Next.js", "Symfony", "Talend", "ETL", "freelance"],
+        ? [
+            "développeur freelance",
+            "développeur full stack freelance",
+            "ingénieur data freelance",
+            "React",
+            "Next.js",
+            "PHP",
+            "Symfony",
+            "Talend",
+            "ETL",
+            "freelance Tunisie",
+            "freelance remote",
+          ]
+        : [
+            "freelance developer",
+            "freelance full stack developer",
+            "freelance data engineer",
+            "React",
+            "Next.js",
+            "PHP",
+            "Symfony",
+            "Talend",
+            "ETL",
+            "remote freelance",
+          ],
     alternates: {
       canonical: `/${locale}`,
       languages: {
@@ -63,14 +93,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       locale: localeMeta[locale].ogLocale,
       alternateLocale: locales.filter((l) => l !== locale).map((l) => localeMeta[l].ogLocale),
       title,
-      description: profile.slogan,
+      description: profile.metaDescription,
       url: `${siteUrl}/${locale}`,
       siteName: `${profile.name} Portfolio`,
     },
     twitter: {
       card: "summary_large_image",
       title,
-      description: profile.slogan,
+      description: profile.metaDescription,
     },
     robots: {
       index: true,

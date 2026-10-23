@@ -5,7 +5,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://iheb-baklouti.verce
 
 /** Structured data: a Person node plus the ProfilePage and WebSite that describe it. */
 export function JsonLd({ locale }: { locale: Locale }) {
-  const { profile, experiences, education, skillGroups } = getPortfolioContent(locale);
+  const { profile, experiences, education, skillGroups, faq } = getPortfolioContent(locale);
   const pageUrl = `${siteUrl}/${locale}`;
   const personId = `${siteUrl}/#person`;
 
@@ -36,7 +36,7 @@ export function JsonLd({ locale }: { locale: Locale }) {
       "@id": `${pageUrl}#page`,
       url: pageUrl,
       name: `${profile.name} — ${profile.headline}`,
-      description: profile.slogan,
+      description: profile.metaDescription,
       inLanguage: localeMeta[locale].htmlLang,
       mainEntity: { "@id": personId },
       isPartOf: { "@id": `${siteUrl}/#website` },
@@ -48,6 +48,18 @@ export function JsonLd({ locale }: { locale: Locale }) {
       name: `${profile.name} Portfolio`,
       inLanguage: localeMeta[locale].htmlLang,
       publisher: { "@id": personId },
+    },
+    // Mirrors the visible FAQ section exactly (same questions/answers) — required
+    // for Google to treat it as a genuine FAQPage rather than hidden/mismatched markup.
+    {
+      "@type": "FAQPage",
+      "@id": `${pageUrl}#faq`,
+      inLanguage: localeMeta[locale].htmlLang,
+      mainEntity: faq.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: { "@type": "Answer", text: item.answer },
+      })),
     },
   ];
 

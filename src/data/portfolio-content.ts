@@ -7,6 +7,14 @@ type Profile = {
   /** Short role words cycled in the hero. Each one is backed by the CV. */
   roles: string[];
   slogan: string;
+  /**
+   * Search-engine-facing description (meta description, Open Graph, JSON-LD).
+   * Kept separate from `slogan` on purpose: the hero paragraph is written for
+   * a human reader, this one is written for the terms a prospective client
+   * actually types into Google ("développeur freelance", stack names,
+   * availability) — the two don't need to read the same way.
+   */
+  metaDescription: string;
   bio: string;
   availability: string;
   location: string;
@@ -45,9 +53,10 @@ type Project = {
 };
 
 type SkillGroup = { title: string; items: string[] };
+type FaqItem = { question: string; answer: string };
 
 type Labels = {
-  nav: { home: string; about: string; projects: string; skills: string; contact: string };
+  nav: { home: string; about: string; projects: string; skills: string; faq: string; contact: string };
   localeName: { fr: string; en: string };
   a11y: {
     toggleTheme: string;
@@ -90,6 +99,7 @@ type Labels = {
     empty: string;
   };
   skills: { title: string; heading: string; subtitle: string; marqueeLabel: string };
+  faq: { title: string; heading: string; subtitle: string };
   contact: {
     title: string;
     subtitle: string;
@@ -118,6 +128,7 @@ export type PortfolioContent = {
   internships: Internship[];
   projects: Project[];
   skillGroups: SkillGroup[];
+  faq: FaqItem[];
   labels: Labels;
 };
 
@@ -144,6 +155,8 @@ const fr: PortfolioContent = {
     ],
     slogan:
       "Je conçois des applications web robustes et des pipelines de données fiables, du produit jusqu'à l'industrialisation.",
+    metaDescription:
+      "Développeur Full Stack & Data freelance (React, Next.js, PHP/Symfony, ETL/Talend). Disponible pour missions courtes ou longues, remote ou hybride.",
     bio: "Ingénieur en génie informatique, je combine développement applicatif (PHP, React, APIs) et projets data : collecte, transformation, traitement des données, outils intranet et intégrations (Talend, passerelles d'import/export).",
     availability: "Disponible pour des missions freelance — court ou long terme, en remote ou hybride.",
     location: "Tunisie · Remote / hybride",
@@ -295,8 +308,35 @@ const fr: PortfolioContent = {
     { title: "Data & BI", items: ["Talend", "ETL / intégration", "Passerelles import-export", "Power BI"] },
     { title: "Outils & méthodes", items: ["Git", "UML", "Agile / Scrum", "Jira", "Figma", "Photoshop"] },
   ],
+  faq: [
+    {
+      question: "Es-tu disponible actuellement pour une mission freelance ?",
+      answer:
+        "Oui, je suis disponible pour des missions freelance — courtes ou longues, en remote ou en hybride.",
+    },
+    {
+      question: "Quelles technologies maîtrises-tu ?",
+      answer:
+        "Principalement React, Next.js, Angular et Tailwind CSS côté front, PHP (Symfony, Laravel) et GraphQL côté back, et Talend / ETL pour la partie data et intégration.",
+    },
+    {
+      question: "Peux-tu intervenir sur des missions ponctuelles ou seulement des contrats longs ?",
+      answer: "Les deux : une intervention ponctuelle ou un engagement plus long, selon les besoins du projet.",
+    },
+    {
+      question: "Sous combien de temps réponds-tu à une demande ?",
+      answer: "En général sous 24 à 48 heures, via le formulaire de contact, e-mail ou LinkedIn.",
+    },
+  ],
   labels: {
-    nav: { home: "Accueil", about: "À propos", projects: "Projets", skills: "Compétences", contact: "Contact" },
+    nav: {
+      home: "Accueil",
+      about: "À propos",
+      projects: "Projets",
+      skills: "Compétences",
+      faq: "FAQ",
+      contact: "Contact",
+    },
     localeName: { fr: "FR", en: "EN" },
     a11y: {
       toggleTheme: "Basculer le thème clair / sombre",
@@ -349,6 +389,11 @@ const fr: PortfolioContent = {
       subtitle: "Développement full stack, données et intégration — aligné sur le terrain et le CV.",
       marqueeLabel: "Technologies utilisées au quotidien",
     },
+    faq: {
+      title: "FAQ",
+      heading: "Questions fréquentes",
+      subtitle: "Ce que les clients me demandent le plus souvent avant de démarrer une mission.",
+    },
     contact: {
       title: "Contact",
       subtitle: "Parlons de votre projet",
@@ -389,6 +434,8 @@ const en: PortfolioContent = {
     ],
     slogan:
       "I design robust web applications and reliable data pipelines, from product build to industrialization.",
+    metaDescription:
+      "Freelance Full Stack & Data developer (React, Next.js, PHP/Symfony, ETL/Talend). Available for short or long-term missions, remote or hybrid.",
     bio: "Computer engineering graduate combining application development (PHP, React, APIs) with data projects: collection, transformation, processing, intranet tools, and integrations (Talend, import/export gateways).",
     availability: "Available for freelance missions — short or long term, remote or hybrid.",
     location: "Tunisia · Remote / hybrid",
@@ -535,8 +582,27 @@ const en: PortfolioContent = {
     { title: "Data & BI", items: ["Talend", "ETL / integration", "Import-export gateways", "Power BI"] },
     { title: "Tools & methods", items: ["Git", "UML", "Agile / Scrum", "Jira", "Figma", "Photoshop"] },
   ],
+  faq: [
+    {
+      question: "Are you currently available for a freelance mission?",
+      answer: "Yes, I'm available for freelance missions — short or long term, remote or hybrid.",
+    },
+    {
+      question: "What technologies do you work with?",
+      answer:
+        "Mainly React, Next.js, Angular and Tailwind CSS on the front end, PHP (Symfony, Laravel) and GraphQL on the back end, and Talend / ETL for data and integration work.",
+    },
+    {
+      question: "Can you take on short, one-off missions, or only long contracts?",
+      answer: "Both: a one-off engagement or a longer-term commitment, depending on the project's needs.",
+    },
+    {
+      question: "How quickly do you reply to a request?",
+      answer: "Usually within 24 to 48 hours, via the contact form, email, or LinkedIn.",
+    },
+  ],
   labels: {
-    nav: { home: "Home", about: "About", projects: "Projects", skills: "Skills", contact: "Contact" },
+    nav: { home: "Home", about: "About", projects: "Projects", skills: "Skills", faq: "FAQ", contact: "Contact" },
     localeName: { fr: "FR", en: "EN" },
     a11y: {
       toggleTheme: "Toggle light / dark theme",
@@ -588,6 +654,11 @@ const en: PortfolioContent = {
       heading: "Technical stack & tools",
       subtitle: "Full stack development, data and integration — aligned with real-world project delivery.",
       marqueeLabel: "Technologies used day to day",
+    },
+    faq: {
+      title: "FAQ",
+      heading: "Frequently asked questions",
+      subtitle: "What clients ask me most often before kicking off a mission.",
     },
     contact: {
       title: "Contact",

@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { locales } from "@/i18n/config";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://iheb-baklouti.vercel.app";
+import { siteUrl } from "@/lib/site-url";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();

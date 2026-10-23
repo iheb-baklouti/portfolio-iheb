@@ -13,11 +13,10 @@ import { BackToTop } from "@/components/ui/back-to-top";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { getPortfolioContent } from "@/data/portfolio-content";
 import { isLocale, locales, localeMeta, type Locale } from "@/i18n/config";
+import { siteUrl } from "@/lib/site-url";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://iheb-baklouti.vercel.app";
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 export const viewport: Viewport = {

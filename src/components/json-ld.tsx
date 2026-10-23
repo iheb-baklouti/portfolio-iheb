@@ -1,7 +1,6 @@
 import { localeMeta, type Locale } from "@/i18n/config";
 import { getPortfolioContent } from "@/data/portfolio-content";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://iheb-baklouti.vercel.app";
+import { siteUrl } from "@/lib/site-url";
 
 /** Structured data: a Person node plus the ProfilePage and WebSite that describe it. */
 export function JsonLd({ locale }: { locale: Locale }) {

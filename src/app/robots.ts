@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://iheb-baklouti.vercel.app";
+import { siteUrl } from "@/lib/site-url";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,6 +10,7 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
-    host: siteUrl,
+    // No `host` directive: it's Yandex-only and never supported by Google,
+    // which flags it as an ignored rule in Search Console for no benefit.
   };
 }
